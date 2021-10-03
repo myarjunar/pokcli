@@ -1,9 +1,11 @@
-FROM golang:1.17-alpine AS build
+FROM golang:1.17-alpine
 
-WORKDIR /src/
-COPY main.go go.* cmd pkg /src/
-RUN CGO_ENABLED=0 go build -o /bin/pokcli
+WORKDIR /app
 
-FROM scratch
-COPY --from=build /bin/pokcli /bin/pokcli
-ENTRYPOINT ["/bin/pokcli"]
+COPY go.* ./
+RUN go mod download
+
+COPY . .
+
+RUN go build -o /bin/pokcli
+ENTRYPOINT [ "/bin/pokcli" ]
